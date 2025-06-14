@@ -44,6 +44,15 @@ function Citizenship({dataForm,updateDataForm}) {
     )
 }
 
+function NextButton({onNext,dataForm}) {
+    if (!(dataForm.citizen === null) & !(dataForm.wyResident === null)) {
+        return <button onClick={onNext}>Next</button>
+    }
+    else {
+        return
+    }
+}
+
 export default function ResidencyCitizenship({onNext,dataForm,updateDataForm}) {
     return(
         <>
@@ -53,7 +62,7 @@ export default function ResidencyCitizenship({onNext,dataForm,updateDataForm}) {
             <div>
                 <Citizenship dataForm={dataForm} updateDataForm={updateDataForm}/>
             </div>
-            <button onClick={onNext}>Next</button>
+            <NextButton onNext={onNext} dataForm={dataForm}/>
         </>
     )
 }
