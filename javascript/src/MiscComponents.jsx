@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-export function AutoFormatMoneyInput({dataStructure,updateDataStructure,dataField}) {
+export function AutoFormatMoneyInput({dataForm,updateDataForm,dataField}) {
   const handleChange = (e) => {
   	const value = e.target.value ; 
   	if ((/^$|^(\d+\,?)+(\.?\d{0,2})$/).test(value)) {
-		updateDataStructure((prevData) => ({
+		updateDataForm((prevData) => ({
 			...prevData, [dataField]: value})) ; 	
      	}
   }
@@ -35,9 +35,9 @@ export function AutoFormatMoneyInput({dataStructure,updateDataStructure,dataFiel
 	}
 	
 	const value_formatted = whole_formatted + decimal_formatted ; 
-	updateDataStructure((prevData) => ({
+	updateDataForm((prevData) => ({
 		...prevData, [dataField]: value_formatted})) ; 
   }
 
-  return <input type="text" onChange={handleChange} onBlur={handleBlur} value={dataForm.[dataField]}/>
+  return <input type="text" onChange={handleChange} onBlur={handleBlur} value={dataForm[dataField]}/>
 }
