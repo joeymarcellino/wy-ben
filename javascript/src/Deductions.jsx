@@ -150,7 +150,7 @@ function ChildSupport({dataForm,updateDataForm}) {
 }
 
 function NextButton({onNext,dataForm}) {
-    if (!(dataForm.paysRentMortgage === null)) {
+    if (!(dataForm.paysRentMortgage === null) && !(dataForm.paysHeatingCooling === null) && !(dataForm.paysMedicalExpenses === null) && !(dataForm.paysDependentCare === null) && !(dataForm.paysChildSupport === null)) {
         return <button onClick={onNext}>Next</button>
     }
     else {
