@@ -36,16 +36,27 @@ function App() {
     const handleIncomeNext = () => {
 	const fields = ["earnedIncome","otherIncome","totalAssets"] ; 
 		
-	    for (let x of fields) {
-		if (dataForm[x] === "") {
-		    dataForm[x] = "0.00"
-		}
-	    } ;
+	for (let x of fields) {
+	    if (dataForm[x] === "") {
+		dataForm[x] = "0.00"
+	    }
+	} ;
 
-	    setStep(step+1) ; 
+	setStep(step+1) ; 
     } ;
 
-    
+    const handleDeductionsNext = () => {
+	const fields = ["rentMortgage","heatingCooling","medicalExpenses","dependentCare","childSupport"] ;
+	const checks =  ["paysRentMortgage","paysHeatingCooling","paysMedicalExpenses","paysDependentCare","paysChildSupport"]
+
+	for (let x = 0; x<fields.length; x++) {
+	    if (dataForm[checks[x]] === true & dataForm[fields[x]] === "") {
+		dataForm[fields[x]] = "0.00"
+	    }
+	} ;
+
+	setStep(step+1) ;
+    } ;
 
     const steps = [<WelcomePage onNext = {() => setStep(step+1)}/>,
 	<ResidencyCitizenship onNext={() => setStep(step+1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
