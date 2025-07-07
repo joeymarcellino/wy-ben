@@ -84,7 +84,7 @@ export default function OtherPrograms({onNext,onBack,dataForm,updateDataForm}) {
                 <OnSSDI dataForm={dataForm} updateDataForm={updateDataForm}/>  
             </div>
             <button onClick={onBack}>Back</button>  
-            <button onClick={onNext}>Next</button> 
+            <button onClick={onNext}>See results</button> 
         </>
     )
 }

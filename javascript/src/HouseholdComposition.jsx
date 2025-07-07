@@ -1,19 +1,23 @@
 import {useState} from 'react' ; 
 
-function HouseholdSize({dataForm,updateDataForm}) {
+function HouseholdSize({dataForm, updateDataForm}) {
   const handleChange = (e) => {
-	const value = e.target.value ; 
-	updateDataForm((prevData) => ({
-		 ...prevData, size: value})) ; 
-	}  
+    updateDataForm((prevData) => ({
+      ...prevData, size: e.target.value})) ;
+  } ;
+
   return (
-	<>
-	  <h1>How many people are in your household?</h1> 
-	  <div>
-	    <input type="number" min="1" max="14" value={dataForm.size} onChange={handleChange}/> 
-	  </div>
-	</>
-	)
+    <>
+      <h1>How many people are in your household, including yourself?</h1>
+      <select value={dataForm.size} onChange={handleChange}>
+        {[...Array(14)].map((_, i) => (
+          <option key={i + 1} value={i + 1}>
+            {i + 1}
+          </option>
+        ))}
+      </select>
+    </>
+  ) ;
 }
 
 function PregnantPostpartum({dataForm,updateDataForm}) {
@@ -85,6 +89,19 @@ function Disabled({dataForm,updateDataForm}) {
 	</>
 	)
 }
+function Student({dataForm,updateDataForm}) {
+  const handleChange = (e) => {
+	const value = e.target.checked ; 
+	updateDataForm((prevData) => ({
+		...prevData, student: value})) ; 
+	}
+  return (
+	<>
+	    <p>A student attending college, university, graduate school, or trade/technical school at least half time?</p>
+  	    <input type="checkbox" onChange={handleChange} checked={dataForm.student}/> 
+	</>
+	)
+}
 
 export default function HouseholdComposition({onNext,onBack,dataForm,updateDataForm}) {
     return (
@@ -101,6 +118,7 @@ export default function HouseholdComposition({onNext,onBack,dataForm,updateDataF
                 <Child5to16 dataForm={dataForm} updateDataForm={updateDataForm}/>  
                 <Elderly dataForm={dataForm} updateDataForm={updateDataForm}/> 
                 <Disabled dataForm={dataForm} updateDataForm={updateDataForm}/>  
+                <Student dataForm={dataForm} updateDataForm={updateDataForm}/>  
             </div>
             <button onClick={onBack}>Back</button>  
             <button onClick={onNext}>Next</button> 
