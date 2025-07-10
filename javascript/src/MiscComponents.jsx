@@ -55,15 +55,33 @@ export function HowMuchSubQuestion({dataForm,updateDataForm,displayCheck,dataFie
     }
 }
 
-export function ResultsCard({program, icon, description, link}) {
-    return (
-	<div className="results-card">
-	    <div className="icon">{icon}</div>
-	    <h2>{program}</h2>
-	    <p>{description}</p>
-	    <a href={link}>Learn More</a>
-	</div>
-    )
+export function ResultsCard({qualified, reasons, program, icon, description, link}) {
+    const [showReasons, setShowReasons] = useState(false) ;
+    const handleClick = () => {
+	setShowReasons((prev) => !prev) ;
+    }
+    if (qualified) {
+	return (
+	    <div className="results-card">
+		<div className="icon">{icon}</div>
+		<h2>{program}</h2>
+		<p>{description}</p>
+		<a href={link}>Learn More</a>
+	    </div>
+	)
+    }
+    else {
+	const reasonButtonClass = showReasons ? "show-less" : "show-more" ; 
+	return (
+	    <div className="results-card">
+		<div className="icon">{icon}</div>
+		<h2>{program}</h2>
+		<p>{description}</p>
+		<button className={reasonButtonClass} onClick={handleClick}>Why not?</button>
+		{showReasons && reasons}
+	    </div>
+	)
+    }
 }
 
 // Wyoming SNAP Income Limits (Oct 1, 2024 – Sept 30, 2025)

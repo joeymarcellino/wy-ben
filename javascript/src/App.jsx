@@ -48,11 +48,7 @@ function App() {
 	onMedicaid: false,
 	onTANF: false,
 	onSSI: false,
-	onSSDI: false,
-	qualifiedSNAP: true,
-	qualifiedWIC: true,
-	qualifiedMedicaid: true,
-	qualifiedLIHEAP: true
+	onSSDI: false
     }) ; 
 
     const handleIncomeNext = () => {
@@ -101,7 +97,7 @@ function App() {
 	<MedicalDependentChildSupport onNext={handleMedicalDependentChildSupportNext} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<Utilities onNext={() => setStep(step+1)} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<OtherPrograms onNext={() => setStep(step+1)} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
-	<Results onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>]; 
+	<Results onBack={() => setStep(step-1)} dataForm={dataForm}/>]; 
 
     return (
 	<>

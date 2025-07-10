@@ -2,15 +2,15 @@ import { useState } from 'react' ;
 import { wySNAPIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
 
-function SnapEligibility({dataForm, updateDataForm}) {
+function SnapEligibility({dataForm}) {
     const povertyLine = 1255.00 ;
 
     const size = Number(dataForm.size)
     const hheod = dataForm.elderly || dataForm.disabled ;
 
-    const earnedIncome = Number(dataForm.earnedIncome) ;
-    const otherIncome = Number(dataForm.otherIncome) ;
-    const totalAssets = Number(dataForm.totalAssets) ;
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+    const totalAssets = Number(dataForm.totalAssets.replace(/,/g,"")) ;
 
     const rentMortgage = dataForm.paysRentMortgage ? Number(dataForm.rentMortgage) : 0 ;
     const insuranceTaxHOA = dataForm.paysInsuranceTaxHOA ? Number(dataForm.insuranceTaxHOA) : 0 ;
@@ -72,6 +72,18 @@ function SnapEligibility({dataForm, updateDataForm}) {
     }
 
     // tests
+    let qualifiedSNAP = true ;
+    const reasonList = [] ; 
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedSNAP = false ;
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedSNAP = false ;
+	reasonList.push("At least one household member must be a U.S. citizen or qualified immigrant.")
+    }
+
     // gross income
     let grossIncomeLimit
     if (hheod) {
@@ -81,9 +93,12 @@ function SnapEligibility({dataForm, updateDataForm}) {
 	grossIncomeLimit = wySNAPIncomeLimits.maxGross[Math.min(size,10)] + Math.max(size - 10,0)*wySNAPIncomeLimits.maxGross.additionalMember ;
     }
 
+    const grossIncomeString = String(earnedIncome + otherIncome) ;
+    const grossIncomeLimitString = String(grossIncomeLimit) ; 
+
     if (earnedIncome + otherIncome > grossIncomeLimit) {
-	updateDataForm((prevData) => ({
-		...prevData, qualifiedSNAP: false})) ; 
+	qualifiedSNAP = false ;
+	reasonList.push("Your total monthly income of " + grossIncomeString + " per month exceeds the limit of " + grossIncomeLimitString + " for your household size and composition.")
     }
 
     // net income
@@ -100,40 +115,60 @@ function SnapEligibility({dataForm, updateDataForm}) {
 	- utilityDeduction
     ) ;
     const netIncomeLimit = wySNAPIncomeLimits.maxNet[Math.min(size,10)] + Math.max(size - 10,0)*wySNAPIncomeLimits.maxNet.additionalMember ;
+
+    const netIncomeString = String(netIncome) ;
+    const netIncomeLimitString = String(netIncomeLimit) ; 
+
     if (netIncome > netIncomeLimit) {
-	updateDataForm((prevData) => ({
-		...prevData, qualifiedSNAP: false})) ; 
+	qualifiedSNAP = false ;
+	reasonList.push("Your net monthly income (total minus allowed deductions) of $" + netIncomeString + " per month exceeds the limit of " + netIncomeLimitString + " for your household size and composition.")
     }
 
     // assets
+    let assetLimit ;
     if (hheod) {
 	assetLimit = 3750 ;
     }
     else {
 	assetLimit = 2500 ;
     }
+
+    const assetString = String(totalAssets) ;
+    const assetLimitString = String(assetLimit) ; 
+
     if (totalAssets > assetLimit) {
-	updateDataForm((prevData) => ({
-		...prevData, qualifiedSNAP: false})) ; 
+	qualifiedSNAP = false ;
+	reasonList.push("Your total assets of $" + dataForm.totalAssets + " exceeds the limit of $" + assetLimitString + " for your household size and composition.")
+    }
+
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
     }
 
     // html
+    let description ;
     if (dataForm.onSNAP) {
-	const description = "Already participating" ;
+	description = "Already participating" ;
 	return (
-	    <ResultsCard program={"SNAP"} icon={"snapicon.png"} description={description} link={"google.com"}/>
+	    <ResultsCard qualified={true} reasons={''} program={"SNAP"} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
-    else if (dataForm.qualifiedSNAP) {
-	const description = "Likely eligible" ;
+    else if (qualifiedSNAP) {
+	description = "Likely eligible" ;
 	return (
-	    <ResultsCard program={"SNAP"} icon={"snapicon.png"} description={description} link={"google.com"}/>
+	    <ResultsCard qualified={true} reasons={''} program={"SNAP"} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
     else {
-	const description = "Likely not eligible" ;
+	description = "Likely not eligible" ;
 	return (
-	    <ResultsCard program={"SNAP"} icon={"snapicon.png"} description={description} link={"google.com"}/>
+	    <ResultsCard program={"SNAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
