@@ -14,7 +14,7 @@ import Results from './Results' ;
 function App() {
     const [step, setStep] = useState(0) ; 
     const [dataForm, updateDataForm] = useState({
-	wyResident: null,
+	resident: null,
 	citizen: null,
 	size: "1",
 	pregnantPostpartum: false,

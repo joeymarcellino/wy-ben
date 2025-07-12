@@ -1,5 +1,5 @@
 import { useState } from 'react' ;
-import { wySNAPIncomeLimits } from './MiscComponents' ;
+import { snapIncomeLimits, wicIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
 
 function SnapEligibility({dataForm}) {
@@ -17,6 +17,9 @@ function SnapEligibility({dataForm}) {
     const medicalExpenses = dataForm.paysMedicalExpenses ? Number(dataForm.medicalExpenses) : 0 ;
     const dependentCare = dataForm.paysDependentCare ? Number(dataForm.dependentCare) : 0 ;
     const childSupport = dataForm.paysChildSupport ? Number(dataForm.childSupport) : 0 ;
+
+    const onSSI = dataForm.onSSI ;
+    const onTANF = dataForm.onTANF ; 
 
     // earned income deduction
     const earnedIncomeDeduction = 0.2*earnedIncome ;
@@ -87,14 +90,14 @@ function SnapEligibility({dataForm}) {
     // gross income
     let grossIncomeLimit
     if (hheod) {
-	grossIncomeLimit = wySNAPIncomeLimits.maxGrossHHEOD[Math.min(size,10)] + Math.max(size - 10,0)*wySNAPIncomeLimits.maxGrossHHEOD.additionalMember ;
+	grossIncomeLimit = snapIncomeLimits.maxGrossHHEOD[Math.min(size,10)] + Math.max(size - 10,0)*snapIncomeLimits.maxGrossHHEOD.additionalMember ;
     }
     else {
-	grossIncomeLimit = wySNAPIncomeLimits.maxGross[Math.min(size,10)] + Math.max(size - 10,0)*wySNAPIncomeLimits.maxGross.additionalMember ;
+	grossIncomeLimit = snapIncomeLimits.maxGross[Math.min(size,10)] + Math.max(size - 10,0)*snapIncomeLimits.maxGross.additionalMember ;
     }
 
-    const grossIncomeString = String(earnedIncome + otherIncome) ;
-    const grossIncomeLimitString = String(grossIncomeLimit) ; 
+    const grossIncomeString = (earnedIncome + otherIncome).toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const grossIncomeLimitString = grossIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
 
     if (earnedIncome + otherIncome > grossIncomeLimit) {
 	qualifiedSNAP = false ;
@@ -114,14 +117,14 @@ function SnapEligibility({dataForm}) {
 	- childSupport
 	- utilityDeduction
     ) ;
-    const netIncomeLimit = wySNAPIncomeLimits.maxNet[Math.min(size,10)] + Math.max(size - 10,0)*wySNAPIncomeLimits.maxNet.additionalMember ;
+    const netIncomeLimit = snapIncomeLimits.maxNet[Math.min(size,10)] + Math.max(size - 10,0)*snapIncomeLimits.maxNet.additionalMember ;
 
-    const netIncomeString = String(netIncome) ;
-    const netIncomeLimitString = String(netIncomeLimit) ; 
+    const netIncomeString = netIncome.toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const netIncomeLimitString = netIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
 
     if (netIncome > netIncomeLimit) {
 	qualifiedSNAP = false ;
-	reasonList.push("Your net monthly income (total minus allowed deductions) of $" + netIncomeString + " per month exceeds the limit of " + netIncomeLimitString + " for your household size and composition.")
+	reasonList.push("Your net monthly income (total minus allowed deductions) of " + netIncomeString + " per month exceeds the limit of " + netIncomeLimitString + " for your household size and composition.")
     }
 
     // assets
@@ -133,14 +136,15 @@ function SnapEligibility({dataForm}) {
 	assetLimit = 2500 ;
     }
 
-    const assetString = String(totalAssets) ;
-    const assetLimitString = String(assetLimit) ; 
+    const assetString = totalAssets.toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const assetLimitString = assetLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
 
-    if (totalAssets > assetLimit) {
+    if ((totalAssets > assetLimit) & !(onSSI || onTANF)) {
 	qualifiedSNAP = false ;
-	reasonList.push("Your total assets of $" + dataForm.totalAssets + " exceeds the limit of $" + assetLimitString + " for your household size and composition.")
+	reasonList.push("Your total assets of " + assetString + " exceed the limit of " + assetLimitString + " for your household size and composition.")
     }
 
+    // reasons not qualified
     function Reasons({reasonList}) {
 	return (
 	    <ul className="reason-list">
@@ -173,7 +177,83 @@ function SnapEligibility({dataForm}) {
     }
 }
 
-function WicEligibility({dataForm,updateDataForm}) {
+function WicEligibility({dataForm}) {
+    const size = Number(dataForm.size) ;
+    const resident = dataForm.resident ; 
+    const citizen = dataForm.citizen ; 
+
+    const pregnant = dataForm.pregnantPostpartum ;
+    const childUnder5 = dataForm.childUnder5 ;
+
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+
+    const onSNAP = dataForm.onSNAP ;
+    const onTANF = dataForm.onTANF ;
+    const onMedicaid = dataForm.onMedicaid ;
+
+    // tests
+    let qualifiedWIC = true ;
+    const reasonList = [] ;
+
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedWIC = false ;
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedWIC = false ;
+	reasonList.push("At least one household member must be a U.S. citizen or qualified immigrant.")
+    }
+
+    // pregnant
+    if (!(pregnant || childUnder5)) {
+	qualifiedWIC = false ; 
+	reasonList.push('Your household must include someone who is pregnant, recently postpartum, or breastfeeding, or a child under 5 years old.') ; 
+    }
+
+    // income
+    const grossIncomeLimit = wicIncomeLimits.maxGross[size] ;
+
+    const grossIncomeString = (earnedIncome + otherIncome).toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const grossIncomeLimitString = grossIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
+
+    if ((earnedIncome + otherIncome > grossIncomeLimit) & !(onSNAP || onTANF || onMedicaid)) {
+	qualifiedWIC = false ;
+	reasonList.push("Your total monthly income of " + grossIncomeString + " per month exceeds the limit of " + grossIncomeLimitString + " for your household size and composition.")
+    }
+
+    // reasons not qualified
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
+    }
+
+    // html
+    let description ;
+    if (dataForm.onWIC) {
+	description = "Already participating" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"WIC"} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (qualifiedWIC) {
+	description = "Likely eligible" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"WIC"} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else {
+	description = "Likely not eligible" ;
+	return (
+	    <ResultsCard program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
 }
 
 function LiheapEligibility({dataForm,updateDataForm}) {
@@ -186,6 +266,7 @@ export default function Results({onBack,dataForm}) {
     return (
 	<>
 	    <SnapEligibility dataForm={dataForm}/>
+	    <WicEligibility dataForm={dataForm}/>
 	</>
     )
 }

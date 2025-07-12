@@ -85,7 +85,7 @@ export function ResultsCard({qualified, reasons, program, icon, description, lin
 }
 
 // Wyoming SNAP Income Limits (Oct 1, 2024 – Sept 30, 2025)
-export const wySNAPIncomeLimits = {
+export const snapIncomeLimits = {
     maxGrossHHEOD: {
 	1: 2071,
 	2: 2811,
@@ -124,5 +124,26 @@ export const wySNAPIncomeLimits = {
 	9: 4843,
 	10: 5292,
 	additionalMember: 449
+    }
+}
+
+export const wicIncomeLimits = {
+    maxGross: {
+	1: 2413,
+	2: 3261,
+	3: 4109,
+	4: 4957,
+	5: 5805,
+	6: 6653,
+	7: 7501,
+	8: 8349,
+	9: 9197,
+	10: 10044,
+	11: 10892,
+	12: 11740,
+	13: 12588,
+	14: 13436,
+	15: 14284,
+	16: 15132
     }
 }

@@ -3,15 +3,15 @@ import { useState } from 'react'
 function Residency({dataForm,updateDataForm}) {
     const handleYesClick = (e) => {
         updateDataForm((prevData) => ({
-            ...prevData, wyResident : true})) 
+            ...prevData, resident : true})) 
     }
     const handleNoClick = (e) => {
         updateDataForm((prevData) => ({
-            ...prevData, wyResident : false})) 
+            ...prevData, resident : false})) 
     }
 
-    const yesClass = dataForm.wyResident === true ? "clickedButton" : "unclickedButton"
-    const noClass = dataForm.wyResident === false ? "clickedButton" : "unclickedButton"
+    const yesClass = dataForm.resident === true ? "clickedButton" : "unclickedButton"
+    const noClass = dataForm.resident === false ? "clickedButton" : "unclickedButton"
 
     return(
         <>
@@ -45,7 +45,7 @@ function Citizenship({dataForm,updateDataForm}) {
 }
 
 function NextButton({onNext,dataForm}) {
-    if (!(dataForm.citizen === null) & !(dataForm.wyResident === null)) {
+    if (!(dataForm.citizen === null) & !(dataForm.resident === null)) {
         return <button onClick={onNext}>Next</button>
     }
     else {

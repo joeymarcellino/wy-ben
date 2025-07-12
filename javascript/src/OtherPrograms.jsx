@@ -36,7 +36,7 @@ function OnTANF({dataForm,updateDataForm}) {
 	}
   return (
 	<>
-	    <p>TANF (Temporary Assistance for Needy Families)</p>
+	    <p>POWER / TANF (Temporary Assistance for Needy Families)</p>
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.onTANF}/> 
 	</>
 	)
