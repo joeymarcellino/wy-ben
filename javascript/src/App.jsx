@@ -44,11 +44,13 @@ function App() {
 	dependentCare: "",
 	paysChildSupport: null,
 	childSupport: "",
-	onSNAP: false,
-	onMedicaid: false,
-	onTANF: false,
-	onSSI: false,
-	onSSDI: false
+	onSNAP: null,
+	onMedicaid: null,
+	onTANF: null,
+	tanfIncome : "",
+	onSSI: null,
+	ssiIncome: "",
+	onSSDI: null
     }) ; 
 
     const handleIncomeNext = () => {

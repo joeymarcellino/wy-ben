@@ -1,5 +1,5 @@
 import { useState } from 'react' ;
-import { snapIncomeLimits, wicIncomeLimits } from './MiscComponents' ;
+import { snapIncomeLimits, wicIncomeLimits, liheapIncomeLimits , medicaidIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
 
 function SnapEligibility({dataForm}) {
@@ -172,7 +172,7 @@ function SnapEligibility({dataForm}) {
     else {
 	description = "Likely not eligible" ;
 	return (
-	    <ResultsCard program={"SNAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={false} program={"SNAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
@@ -251,15 +251,260 @@ function WicEligibility({dataForm}) {
     else {
 	description = "Likely not eligible" ;
 	return (
-	    <ResultsCard program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={false} program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
 
-function LiheapEligibility({dataForm,updateDataForm}) {
+function LiheapEligibility({dataForm}) {
+    const size = Number(dataForm.size) ;
+    const resident = dataForm.resident ; 
+    const citizen = dataForm.citizen ; 
+
+    const paysHeatingCooling = dataForm.paysHeatingCooling ;
+
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+
+    // tests
+    let qualifiedLIHEAP = true ;
+    const reasonList = [] ;
+
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedLIHEAP = false ;
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedLIHEAP = false ;
+	reasonList.push("At least one household member must be a U.S. citizen or qualified immigrant.")
+    }
+
+    // pays heating/cooling
+    if (!paysHeatingCooling) {
+	qualifiedLIHEAP = false ;
+	reasonList.push("LIHEAP provides assistance with heating/cooling bills, but you indicated that you don't pay those (separately from rent/mortgage).")
+    }
+
+
+    // income
+    const grossIncomeLimit = liheapIncomeLimits.maxGross[size] ;
+
+    const grossIncomeString = (earnedIncome + otherIncome).toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const grossIncomeLimitString = grossIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
+
+    if (earnedIncome + otherIncome > grossIncomeLimit) {
+	qualifiedLIHEAP = false ;
+	reasonList.push("Your total monthly income of " + grossIncomeString + " per month exceeds the limit of " + grossIncomeLimitString + " for your household size and composition.")
+    }
+
+    // reasons not qualified
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
+    }
+
+    // html
+    let description ;
+    if (dataForm.onLIHEAP) {
+	description = "Already participating" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"LIHEAP"} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (qualifiedLIHEAP) {
+	description = "Likely eligible" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"LIHEAP"} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else {
+	description = "Likely not eligible" ;
+	return (
+	    <ResultsCard qualified={false} program={"LIHEAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
 }
 
 function MedicaidEligibility({dataForm,updateDataForm}) {
+    const size = Number(dataForm.size) ;
+    const resident = dataForm.resident ;
+    const citizen = dataForm.citizen ;
+
+    const pregnant = dataForm.pregnantPostpartum ;
+    const childUnder5 = dataForm.childUnder5 ;
+    const child5to18 = dataForm.child5to18 ;
+    const disabled = dataForm.disabled ;
+
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+
+    let tanfIncome ;
+    let ssiIncome ;
+
+    if (dataForm.tanfIncome === "") {
+	tanfIncome = 0 ;
+    }
+    else {
+	tanfIncome = Number(dataForm.tanfIncome.replace(/,/g,"")) ;
+    }
+
+    if (dataForm.ssiIncome === "") {
+	ssiIncome = 0 ;
+    }
+    else {
+	ssiIncome = Number(dataForm.ssiIncome.replace(/,/g,"")) ;
+    }
+
+    // tests
+    let qualifiedChildMedicaid = true ;
+    let qualifiedCHIP = true ;
+    let qualifiedMAGI = true ;
+    let qualifiedPregnantMedicaid = true ;
+    let qualifiedDisabledMedicaid = true ; 
+    const reasonList = [] ;
+
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedChildMedicaid = false ;
+	qualifiedPregnantMedicaid = false ;
+	qualifiedCHIP = false ;
+	qualifiedMAGI = false ;
+
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedChildMedicaid = false ;
+	qualifiedPregnantMedicaid = false ;
+	qualifiedCHIP = false ;
+	qualifiedMAGI = false ;
+	reasonList.push("Medicaid recipients must be U.S. citizens or qualified immigrants.")
+    }
+
+    // pregnancy + children
+    if (!(pregnant || childUnder5)) {
+	qualifiedPregnantMedicaid = false ;
+    }
+
+    if (!child5to18) {
+	qualifiedChildMedicaid = false ;
+    }
+
+    if (!(childUnder5 || child5to18)) {
+	qualifiedMAGI = false ; 
+	qualifiedCHIP = false ;
+    }
+
+    // disabled 
+    if (!disabled) {
+	qualifiedDisabledMedicaid = false ; 
+    }
+
+    // income
+    // chip
+    let chipLimit ;
+    let childUnder5orPregnantLimit ;
+    let child6to18Limit ;
+    let magiLimit ;
+    const disabledLimit = medicaidIncomeLimits.disabled ;
+
+    let oversize = false ;
+    if (size <= 10) {
+	chipLimit = medicaidIncomeLimits.chip[size] ;
+	childUnder5orPregnantLimit = medicaidIncomeLimits.childUnder5orPregnant[size] ;
+	child6to18Limit = medicaidIncomeLimits.child6to18[size] ;
+	magiLimit = medicaidIncomeLimits.magi[size] ;
+    }
+    else {
+	chipLimit = 0 ;
+	childUnder5orPregnantLimit = 0 ;
+	child6to18Limit = 0 ;
+	magiLimit = 0 ;
+	oversize = true ;
+    }
+
+    if (earnedIncome + otherIncome - tanfIncome - ssiIncome > chipLimit) {
+	qualifiedCHIP = false ;
+    }
+
+    if (earnedIncome + otherIncome - tanfIncome - ssiIncome > childUnder5orPregnantLimit) {
+	qualifiedPregnantMedicaid = false ;
+    }
+
+    if (earnedIncome + otherIncome - tanfIncome - ssiIncome > child6to18Limit) {
+	qualifiedChildMedicaid = false ;
+    }
+
+    if (otherIncome - tanfIncome - ssiIncome > disabledLimit) {
+	qualifiedDisabledMedicaid = false ;
+    }
+
+    if (earnedIncome + otherIncome > magiLimit) {
+	qualifiedMAGI = false ;
+    }
+
+    if (!(qualifiedCHIP || qualifiedPregnantMedicaid || qualifiedChildMedicaid || qualifiedDisabledMedicaid || qualifiedMAGI)) {
+	if (!(childUnder5 || child5to18) & !disabled) {
+	    reasonList.push("In general, Wyoming Medicaid is restricted to children and people with disabilities or who are pregnant.") ;
+	}
+	else {
+	    reasonList.push("Your household exceeds the income thresholds for Wyoming's Medicaid programs.") ;
+	}
+    }
+
+    // reasons not qualified
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
+    }
+
+    // html
+    let description ;
+    if (dataForm.onMedicaid) {
+	description = "Already participating" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"Medicaid"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (oversize) {
+	description = "" ;
+	return (
+	    <ResultsCard qualified={true} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (qualifiedMAGI || qualifiedPregnantMedicaid || qualifiedChildMedicaid || qualifiedDisabledMedicaid) {
+	description = "Likely eligible" ;
+	return (
+	    <>
+		{qualifiedCHIP &&
+		<ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan"} icon={"chipicon.png"} description={description} link={"http://www.google.com"}/>}
+		<ResultsCard qualified={true} reasons={''} program={"Medicaid"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    </>
+	)
+    }
+    else if (qualifiedCHIP) {
+	description = "Likely eligible" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else {
+	description = "Likely not eligible" ;
+	return (
+	    <ResultsCard qualified={false} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+
 }
 
 export default function Results({onBack,dataForm}) {
@@ -267,6 +512,8 @@ export default function Results({onBack,dataForm}) {
 	<>
 	    <SnapEligibility dataForm={dataForm}/>
 	    <WicEligibility dataForm={dataForm}/>
+	    <LiheapEligibility dataForm={dataForm}/>
+	    <MedicaidEligibility dataForm={dataForm}/>
 	</>
     )
 }
