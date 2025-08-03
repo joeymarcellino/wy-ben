@@ -3,45 +3,44 @@ import { AutoFormatMoneyInput } from "./MiscComponents";
 
 function HouseholdEarnedIncome({dataForm,updateDataForm}) {
   return (
-	<>
-	  <h1>What is your monthly household earned income before taxes?</h1>
-	  <div>
+	<div className="question-block">
+	    <h2>What is your monthly household earned income before taxes?</h2>
+	    <p>Include wages, salaries, tips, and self-employment income before any taxes or deductions.</p>
 	    <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={"earnedIncome"}/>
-	  </div>	
-	</>
+	</div>
 	)
 }
 
 function HouseholdOtherIncome({dataForm,updateDataForm}) {
   return (
-	<>
-	  <h1>What is your monthly household other income before taxes?</h1>
-	  <div>
+	<div className="question-block">
+	    <h2>What is your monthly household other income before taxes?</h2>
+	    <p>Include other stuff</p>
 	    <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={"otherIncome"}/>
-	  </div>	
-	</>
+	</div>
 	)
 }
 
 function TotalAssets({dataForm,updateDataForm}) {
   return (
-	<>
-	  <h1>What are your total assets?</h1>
-	  <div>
+	<div className="question-block">
+	    <h2>What are your total assets?</h2>
+	    <p>Include stuff</p>
 	    <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={"totalAssets"}/>
-	  </div>	
-	</>
+	</div>
 	)
 }
 
 export default function HouseholdIncomeAssets({onNext,onBack,dataForm,updateDataForm}) {
-	return (
-		<>
-			<HouseholdEarnedIncome onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
-			<HouseholdOtherIncome onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
-			<TotalAssets onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
-			<button onClick={onBack}>Back</button>
-			<button onClick={onNext}>Next</button>
-		</>
-	)
+    return (
+	<div className="form-page">
+	    <HouseholdEarnedIncome onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <HouseholdOtherIncome onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <TotalAssets onNext={onNext} onBack={onBack} dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <div className="nav-buttons">
+		<button className="back-button" onClick={onBack}>Back</button>
+		<button className="next-button" onClick={onNext}>Next</button>
+	    </div>
+	</div>
+    )
 }

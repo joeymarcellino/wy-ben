@@ -10,6 +10,7 @@ import Shelter from './Shelter' ;
 import Utilities from './Utilities' ;
 import OtherPrograms from './OtherPrograms' ;
 import Results from './Results' ;
+import { ProgressBar } from './MiscComponents.jsx' ;
 
 function App() {
     const [step, setStep] = useState(0) ; 
@@ -116,6 +117,7 @@ function App() {
 
     return (
 	<>
+	    <ProgressBar currentStep={step} totalSteps={steps.length}/>
 	    <div>
 		{steps[step]} 
 	    </div>

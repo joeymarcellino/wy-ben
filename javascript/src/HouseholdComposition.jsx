@@ -7,8 +7,8 @@ function HouseholdSize({dataForm, updateDataForm}) {
   } ;
 
   return (
-    <>
-      <h1>How many people are in your household, including yourself?</h1>
+    <div className="question-block">
+      <h2>How many people are in your household, including yourself?</h2>
       <select value={dataForm.size} onChange={handleChange}>
         {[...Array(14)].map((_, i) => (
           <option key={i + 1} value={i + 1}>
@@ -16,7 +16,7 @@ function HouseholdSize({dataForm, updateDataForm}) {
           </option>
         ))}
       </select>
-    </>
+    </div>
   ) ;
 }
 
@@ -34,13 +34,13 @@ function Married({dataForm,updateDataForm}) {
     const noClass = dataForm.married === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Are you married and living with your spouse?</p>
+	<div className="question-block">
+	    <p>Are you married and living with your spouse?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -58,13 +58,13 @@ function PregnantPostpartum({dataForm,updateDataForm}) {
     const noClass = dataForm.pregnantPostpartum === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Pregnant or postpartum (last 12 months)?</p>
+	<div className="question-block">
+	    <p>Pregnant or postpartum (last 12 months)?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -82,13 +82,13 @@ function ChildUnder5({dataForm,updateDataForm}) {
     const noClass = dataForm.childUnder5 === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Under the age of 5?</p>
+	<div className="question-block">
+	    <p>Under the age of 5?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -106,13 +106,13 @@ function Child5to18({dataForm,updateDataForm}) {
     const noClass = dataForm.child5to18 === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Between the age of 5 and 18?</p>
+	<div className="question-block">
+	    <p>Between the age of 5 and 18?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -130,13 +130,13 @@ function Elderly({dataForm,updateDataForm}) {
     const noClass = dataForm.elderly === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Over the age of 60?</p>
+	<div className="question-block">
+	    <p>Over the age of 60?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -154,13 +154,13 @@ function Disabled({dataForm,updateDataForm}) {
     const noClass = dataForm.disabled === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Disabled?</p>
+	<div className="question-block">
+	    <p>Disabled?</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-        </>
+	</div>
     )
 }
 
@@ -178,54 +178,55 @@ function Student({dataForm,updateDataForm}) {
     const noClass = dataForm.student === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
+        <div className="question-block">
 	    <div>
 		<p>A student attending college, university, graduate school, or trade/technical school at least half time?</p>
-		<button className={yesClass} onClick={handleYesClick}>Yes</button>
-		<button className={noClass} onClick={handleNoClick}>No</button>
+		<div className="button-group">
+		    <button className={yesClass} onClick={handleYesClick}>Yes</button>
+		    <button className={noClass} onClick={handleNoClick}>No</button>
+		</div>
 	    </div>
 	    {dataForm.student === true &&
 	    <div>
 		<p>Students don't count lol</p>
 	    </div>
 	    }
-        </>
+        </div>
     )
 }
 
 export default function HouseholdComposition({onNext,onBack,dataForm,updateDataForm}) {
-    let nextButton ; 
-    if ((dataForm.pregnantPostpartum != null) &
-    (dataForm.childUnder5 != null) &
-    (dataForm.child5to18 != null) &
-    (dataForm.elderly != null) &
-    (dataForm.student != null) &
-    (dataForm.disabled != null)) {
-	nextButton = <button onClick={onNext}>Next</button> ;
-    }
+    const nextButtonActive = (
+	dataForm.pregnantPostpartum !== null &
+	dataForm.childUnder5 !== null &
+	dataForm.child5to18 !== null &
+	dataForm.elderly !== null &
+	dataForm.disabled !== null &
+	dataForm.student !== null) ;
     return (
-        <>
-            <div>
-                <HouseholdSize dataForm={dataForm} updateDataForm={updateDataForm}/>  
+        <div className="form-page">
+            <HouseholdSize dataForm={dataForm} updateDataForm={updateDataForm}/>  
+	        {(dataForm.size > 1) &&
+	            <Married dataForm={dataForm} updateDataForm={updateDataForm}/>
+	        }
+
+            <div className="question-block">
+                <h2>Does anyone in your household fit these descriptions?</h2>
+                <p>Select "Yes" or "No" for each.</p>
+                <div className="sub-question-group">
+                    <PregnantPostpartum dataForm={dataForm} updateDataForm={updateDataForm}/> 
+                    <ChildUnder5 dataForm={dataForm} updateDataForm={updateDataForm}/> 
+                    <Child5to18 dataForm={dataForm} updateDataForm={updateDataForm}/>  
+                    <Elderly dataForm={dataForm} updateDataForm={updateDataForm}/> 
+                    <Disabled dataForm={dataForm} updateDataForm={updateDataForm}/>  
+                    <Student dataForm={dataForm} updateDataForm={updateDataForm}/>
+                </div>
             </div>
-	    {(dataForm.size > 1) &&
-	    <div>
-		<Married dataForm={dataForm} updateDataForm={updateDataForm}/>
-	    </div>
-	    }
-            <div>
-                <h1>Are you or anyone in your household...</h1> 
+
+            <div className="nav-buttons">
+                <button onClick={onBack} className="back-button">Back</button>  
+		{nextButtonActive && <button onClick={onNext} className="next-button">Next</button>}
             </div>
-            <div>
-                <PregnantPostpartum dataForm={dataForm} updateDataForm={updateDataForm}/> 
-                <ChildUnder5 dataForm={dataForm} updateDataForm={updateDataForm}/> 
-                <Child5to18 dataForm={dataForm} updateDataForm={updateDataForm}/>  
-                <Elderly dataForm={dataForm} updateDataForm={updateDataForm}/> 
-                <Disabled dataForm={dataForm} updateDataForm={updateDataForm}/>  
-                <Student dataForm={dataForm} updateDataForm={updateDataForm}/>  
-            </div>
-            <button onClick={onBack}>Back</button>  
-	    {nextButton}
-        </>
+        </div>
     )
 }

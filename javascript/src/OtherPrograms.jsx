@@ -16,13 +16,13 @@ function OnSNAP({dataForm,updateDataForm}) {
     const noClass = dataForm.onSNAP === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>SNAP</p>
+        <div className="question-block">
+	    <p>SNAP</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>	
-        </>
+        </div>
     )
 }
 
@@ -40,13 +40,13 @@ function OnMedicaid({dataForm,updateDataForm}) {
     const noClass = dataForm.onMedicaid === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Medicaid</p>
+        <div className="question-block">
+	    <p>Medicaid</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>	
-        </>
+        </div>
     )
 }
 
@@ -65,16 +65,14 @@ function OnTANF({dataForm,updateDataForm}) {
     const noClass = dataForm.onTANF === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>POWER / TANF</p>
+        <div className="question-block">
+	    <p>POWER / TANF</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>	
-	    <div>
-		<HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"onTANF"} dataField={"tanfIncome"} questionText={"How much does your household receive from POWER / TANF per month?"}/>
-	    </div>
-        </>
+	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"onTANF"} dataField={"tanfIncome"} questionText={"How much does your household receive from POWER / TANF per month?"}/>
+        </div>
     )
 }
 
@@ -92,66 +90,35 @@ function OnSSI({dataForm,updateDataForm}) {
     const noClass = dataForm.onSSI === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>SSI</p>
+        <div className="question-block">
+	    <p>SSI</p>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>	
-	    <div>
-		<HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"onSSI"} dataField={"ssiIncome"} questionText={"How much does your household receive from SSI per month?"}/>
-	    </div>
-        </>
-    )
-}
-
-function OnSSDI({dataForm,updateDataForm}) {
-    const handleYesClick = (e) => {
-        updateDataForm((prevData) => ({
-            ...prevData, onSSDI : true})) 
-    }
-    const handleNoClick = (e) => {
-        updateDataForm((prevData) => ({
-            ...prevData, onSSDI : false})) 
-    }
-
-    const yesClass = dataForm.onSSDI === true ? "clickedButton" : "unclickedButton" ; 
-    const noClass = dataForm.onSSDI === false ? "clickedButton" : "unclickedButton" ; 
-
-    return(
-        <>
-	    <div>
-		<p>SSDI</p>
-		<button className={yesClass} onClick={handleYesClick}>Yes</button>
-		<button className={noClass} onClick={handleNoClick}>No</button>
-	    </div>	
-        </>
+	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"onSSI"} dataField={"ssiIncome"} questionText={"How much does your household receive from SSI per month?"}/>
+        </div>
     )
 }
 
 export default function OtherPrograms({onNext,onBack,dataForm,updateDataForm}) {
-    let nextButton ; 
-    if ((dataForm.onSNAP != null) &
+    const nextButtonActive = ((dataForm.onSNAP != null) &
     (dataForm.onMedicaid != null) &
     (dataForm.onTANF != null) &
-    (dataForm.onSSI != null) &
-    (dataForm.onSSDI != null)) {
-	nextButton = <button onClick={onNext}>See results</button> ;
-    }
+    (dataForm.onSSI != null)) ;
     return (
-        <>
-            <div>
-                <h1>Does anyone in your household currently receive any of the following?</h1> 
-            </div>
-            <div>
+        <div className="form-page">
+	    <h1>Does anyone in your household currently receive any of the following?</h1> 
+            <div className="question-block">
                 <OnSNAP dataForm={dataForm} updateDataForm={updateDataForm}/> 
                 <OnMedicaid dataForm={dataForm} updateDataForm={updateDataForm}/> 
                 <OnTANF dataForm={dataForm} updateDataForm={updateDataForm}/>  
                 <OnSSI dataForm={dataForm} updateDataForm={updateDataForm}/> 
-                <OnSSDI dataForm={dataForm} updateDataForm={updateDataForm}/>  
             </div>
-            <button onClick={onBack}>Back</button>
-	    {nextButton}
-        </>
+	    <div className="nav-buttons">
+		<button className="back-button" onClick={onBack}>Back</button>
+		{nextButtonActive && <button onClick={onNext} className="next-button">See results</button>}
+	    </div>
+        </div>
     )
 }

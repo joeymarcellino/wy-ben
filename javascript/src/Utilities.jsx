@@ -7,10 +7,11 @@ function HeatingCooling({dataForm,updateDataForm}) {
 		...prevData, paysHeatingCooling: value})) ; 
 	}
   return (
-	<>
-	    <p>Heating/cooling</p> 
-  	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysHeatingCooling}/> 
-	</>
+	<label className="checkbox-label">
+  	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysHeatingCooling}/>
+	    <span></span>
+	    Heating/cooling
+	</label>
 	)
 }
 
@@ -21,10 +22,11 @@ function Electricity({dataForm,updateDataForm}) {
 		...prevData, paysElectricity: value})) ; 
 	}
   return (
-	<>
-	    <p>Electricity</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysElectricity}/> 
-	</>
+	    <span></span>
+	    Electricity
+	</label>
 	)
 }
 
@@ -35,10 +37,11 @@ function GasFuel({dataForm,updateDataForm}) {
 		...prevData, paysGasFuel: value})) ; 
 	}
   return (
-	<>
-	    <p>Gas/fuel</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysGasFuel}/> 
-	</>
+	    <span></span>
+	    Gas/fuel
+	</label>
 	)
 }
 
@@ -49,10 +52,11 @@ function Water({dataForm,updateDataForm}) {
 		...prevData, paysWater: value})) ; 
 	}
   return (
-	<>
-	    <p>Water</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysWater}/> 
-	</>
+	    <span></span>
+	    Water
+	</label>
 	)
 }
 
@@ -63,10 +67,11 @@ function Sewage({dataForm,updateDataForm}) {
 		...prevData, paysSewage: value})) ; 
 	}
   return (
-	<>
-	    <p>Sewage</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysSewage}/> 
-	</>
+	    <span></span>
+	    Sewage
+	</label>
 	)
 }
 
@@ -77,10 +82,11 @@ function Trash({dataForm,updateDataForm}) {
 		...prevData, paysTrash: value})) ; 
 	}
   return (
-	<>
-	    <p>Trash</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysTrash}/> 
-	</>
+	    <span></span>
+	    Trash
+	</label>
 	)
 }
 
@@ -91,19 +97,20 @@ function Phone({dataForm,updateDataForm}) {
 		...prevData, paysPhone: value})) ; 
 	}
   return (
-	<>
-	    <p>Phone</p> 
+	<label className="checkbox-label">
   	    <input type="checkbox" onChange={handleChange} checked={dataForm.paysPhone}/> 
-	</>
+	    <span></span>
+	    Phone
+	</label>
 	)
 }
 
 export default function Utilities({onNext,onBack,dataForm,updateDataForm}) {
     return (
-	<>
+	<div className="form-page">
 	    <h1>Which of the following utility bills do you pay?</h1>
-	    <p>(check heating/cooling if you received a payment over $20 from LIHEAP)</p>
-	    <div>
+	    <p>Check all that apply. If you receive at least $20 in LIHEAP assistance, check "Heating/cooling".</p>
+	    <div className="checkbox-grid">
 		<HeatingCooling dataForm={dataForm} updateDataForm={updateDataForm}/>
 		<Electricity dataForm={dataForm} updateDataForm={updateDataForm}/>	
 		<GasFuel dataForm={dataForm} updateDataForm={updateDataForm}/>	
@@ -112,11 +119,11 @@ export default function Utilities({onNext,onBack,dataForm,updateDataForm}) {
 		<Trash dataForm={dataForm} updateDataForm={updateDataForm}/>	
 		<Phone dataForm={dataForm} updateDataForm={updateDataForm}/>	
 	    </div>
-	    <div>
-		<button onClick={onBack}>Back</button>  
-		<button onClick={onNext}>Next</button> 
+	    <div className="nav-buttons">
+		<button className="back-button" onClick={onBack}>Back</button>  
+		<button className="next-button" onClick={onNext}>Next</button> 
 	    </div>
-	</>
+	</div>
     )
 }
 

@@ -620,12 +620,19 @@ function TanfEligibility({dataForm}) {
 
 export default function Results({onBack,dataForm}) {
     return (
-	<>
-	    <SnapEligibility dataForm={dataForm}/>
-	    <WicEligibility dataForm={dataForm}/>
-	    <LiheapEligibility dataForm={dataForm}/>
-	    <MedicaidEligibility dataForm={dataForm}/>
-	    <TanfEligibility dataForm={dataForm}/>
-	</>
+	<div className="form-page">
+	    <h1>Your Eligibility Results</h1>
+	    <p>Based on the information you provided, here is a summary of benefits you may be eligible to receive. This is an estimate, not a guarantee of benefits.</p>
+	    <div className="results-grid">
+		<SnapEligibility dataForm={dataForm}/>
+		<WicEligibility dataForm={dataForm}/>
+		<LiheapEligibility dataForm={dataForm}/>
+		<MedicaidEligibility dataForm={dataForm}/>
+		<TanfEligibility dataForm={dataForm}/>
+	    </div>
+	    <div className="nav-buttons">
+		<button onClick={onBack} className="back-button">Go Back & Edit</button>
+	    </div>
+	</div>
     )
 }

@@ -39,7 +39,11 @@ export function AutoFormatMoneyInput({dataForm,updateDataForm,dataField}) {
 		...prevData, [dataField]: value_formatted})) ; 
   }
 
-  return <input type="text" onChange={handleChange} onBlur={handleBlur} value={dataForm[dataField]}/>
+  return (
+    <div className="money-input-wrapper">
+	<input type="text" onChange={handleChange} onBlur={handleBlur} value={dataForm[dataField]}/>
+    </div>
+  )
 }
 
 export function HowMuchSubQuestion({dataForm,updateDataForm,displayCheck,dataField,questionText}) {
@@ -48,11 +52,11 @@ export function HowMuchSubQuestion({dataForm,updateDataForm,displayCheck,dataFie
     }
     else {
 	return (
-	    <>
+	    <div className="sub-question">
 		{questionText} <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={dataField}/>
-	    </>
+	    </div>
 	)
-}
+    }
 }
 
 export function ResultsCard({qualified, reasons, program, icon, description, link}) {
@@ -60,28 +64,55 @@ export function ResultsCard({qualified, reasons, program, icon, description, lin
     const handleClick = () => {
 	setShowReasons((prev) => !prev) ;
     }
+    const cardClass = `results-card ${qualified ? 'is-eligible' : 'is-ineligible'}` ;
+
     if (qualified) {
 	return (
-	    <div className="results-card">
+	    <div className={cardClass}>
 		<div className="icon">{icon}</div>
 		<h2>{program}</h2>
 		<p>{description}</p>
-		<a href={link}>Learn More</a>
+		<a href={link} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More & Apply</a>
 	    </div>
 	)
     }
     else {
-	const reasonButtonClass = showReasons ? "show-less" : "show-more" ; 
 	return (
-	    <div className="results-card">
-		<div className="icon">{icon}</div>
+	    <div className={cardClass}>
+		<div className="icon"></div>
 		<h2>{program}</h2>
 		<p>{description}</p>
-		<button className={reasonButtonClass} onClick={handleClick}>Why not?</button>
-		{showReasons && reasons}
+		<button className="reason-toggle" onClick={handleClick}>
+		    {showReasons ? 'Hide reasons' : 'Why not?'}
+		</button>
+		<div className="reasons-container">
+		    {showReasons && reasons}
+		</div>
 	    </div>
 	)
     }
+}
+
+export function ProgressBar({ currentStep, totalSteps }) {
+  // We subtract 1 from totalSteps because the welcome page (step 0) and results page shouldn't count as "progress" steps.
+  const progressPercentage =
+    currentStep > 0 ? ((currentStep) / (totalSteps - 2)) * 100 : 0;
+
+  // Don't show the bar on the first or last page
+  if (currentStep === 0 || currentStep >= totalSteps - 1) {
+    return null;
+  }
+
+  return (
+    <div className="progress-bar">
+      <div className="progress-bar-track">
+        <div
+          className="progress-bar-fill"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+    </div>
+  );
 }
 
 // Wyoming SNAP Income Limits (Oct 1, 2024 – Sept 30, 2025)

@@ -15,16 +15,14 @@ function RentMortgage({dataForm,updateDataForm}) {
     const noClass = dataForm.paysRentMortgage === false ? "clickedButton" : "unclickedButton" ; 
 
     return(
-        <>
-	    <div>
-		<p>Do you pay rent or make mortgage payments?</p>
+        <div className="question-block">
+	    <h2>Do you pay rent or make mortgage payments?</h2>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
-	    </div>	
-	    <div>
-		<HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysRentMortgage"} dataField={"rentMortgage"} questionText={"How much is your monthly rent or mortgage payment?"}/>
 	    </div>
-        </>
+	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysRentMortgage"} dataField={"rentMortgage"} questionText={"How much is your monthly rent or mortgage payment?"}/>
+        </div>
     )
 }
 
@@ -42,16 +40,14 @@ function InsuranceTaxHOA({dataForm,updateDataForm}) {
     const noClass = dataForm.paysInsuranceTaxHOA === false ? "clickedButton" : "unclickedButton" ;
 
     return(
-        <>
-	    <div>
-		<p>Do you pay for homeowner's insurance, pay property taxes, or pay homeowner's association fees?</p>
+        <div className="question-block">
+	    <h2>Do you pay for homeowner's insurance, pay property taxes, or pay homeowner's association fees?</h2>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
-	    </div>	
-	    <div>
-		<HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysInsuranceTaxHOA"} dataField={"rentMortgage"} questionText={"How much are your monthly homeowner's insurance payments, property taxes, or homeowner's association fees?"}/>
 	    </div>
-        </>
+	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysInsuranceTaxHOA"} dataField={"rentMortgage"} questionText={"How much are your monthly homeowner's insurance payments, property taxes, or homeowner's association fees?"}/>
+        </div>
     )
 }
 
@@ -69,38 +65,31 @@ function Homeless({dataForm,updateDataForm}) {
     const noClass = dataForm.homeless === false ? "clickedButton" : "unclickedButton" ;
 
     return(
-        <>
-		<p>Does your household lack a permanent residence, sleep in a homeless shelter, live on the street, or "couch surf"?</p>
+        <div className="question-block">
+	    <h2>Does your household lack a permanent residence, sleep in a homeless shelter, live on the street, or "couch surf"?</h2>
+	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
-        </>
+	    </div>
+        </div>
     )
 }
 
-function NextButton({onNext,dataForm}) {
-    if (!(dataForm.paysRentMortgage === null) && 
-	!(dataForm.paysInsuranceTaxHOA === null) &&
-	!(dataForm.homeless === null)) {
-        return <button onClick={onNext}>Next</button>
-    }
-    else {
-        return null
-    }
-}
-
 export default function Shelter({onNext,onBack,dataForm,updateDataForm}) {
+    const nextButtonActive = (
+	dataForm.paysRentMortgage !== null &
+	dataForm.paysInsuranceTaxHOA !== null &
+	dataForm.homeless !== null) ;
     return (
-	<>
-	    <div>
-		<RentMortgage dataForm={dataForm} updateDataForm={updateDataForm}/>
-		<InsuranceTaxHOA dataForm={dataForm} updateDataForm={updateDataForm}/>
-		<Homeless dataForm={dataForm} updateDataForm={updateDataForm}/>
+	<div className="form-page">
+	    <RentMortgage dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <InsuranceTaxHOA dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <Homeless dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <div className="nav-buttons">
+		<button className="back-button" onClick={onBack}>Back</button>
+		{nextButtonActive && <button onClick={onNext} className="next-button">Next</button>}
 	    </div>
-	    <div>
-		<button onClick={onBack}>Back</button>
-		<NextButton onNext={onNext} dataForm={dataForm}/>
-	    </div>
-	</>
+	</div>
     )
 }
 
