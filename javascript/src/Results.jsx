@@ -1,10 +1,8 @@
 import { useState } from 'react' ;
-import { snapIncomeLimits, wicIncomeLimits, liheapIncomeLimits , medicaidIncomeLimits } from './MiscComponents' ;
+import { snapIncomeLimits, snapDeductions, wicIncomeLimits, liheapIncomeLimits, medicaidIncomeLimits, tanfIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
 
 function SnapEligibility({dataForm}) {
-    const povertyLine = 1255.00 ;
-
     const size = Number(dataForm.size)
     const hheod = dataForm.elderly || dataForm.disabled ;
 
@@ -26,23 +24,17 @@ function SnapEligibility({dataForm}) {
 
     // standard deduction
     let standardDeduction = 0 ;
-    if (size >= 1 && size < 4) {
-	standardDeduction = 177 ;
-    }
-    else if (size === 4) {
-	standardDeduction = 184 ;
-    }
-    else if (size === 5) {
-	standardDeduction = 215 ;
+    if (size < 6) {
+	standardDeduction = snapDeductions.standard[size] ;
     }
     else {
-	standardDeduction = 246 ;
+	standardDeduction = snapDeductions.standard.moreThan5 ;
     }
 
     // medical deduction
     let medicalDeduction = 0 ;
     if (hheod && (medicalExpenses > 35)) {
-	medicalDeduction = Math.max(medicalExpenses,175) ;
+	medicalDeduction = Math.max(medicalExpenses,snapDeductions.medical) ;
     }
     else if (hheod && (medicalExpenses <= 35)) {
 	medicalDeduction = medicalExpenses ;
@@ -54,24 +46,24 @@ function SnapEligibility({dataForm}) {
     let shelterDeduction = 0 ;
     shelterDeduction = Math.max(rentMortgage + insuranceTaxHOA - shelterThreshold,0) ; 
     if (!hheod) {
-	shelterDeduction = Math.min(shelterDeduction, 712) ;
+	shelterDeduction = Math.min(shelterDeduction, snapDeductions.shelterMax) ;
     }
 
     // homeless deduction
-    const homelessDeduction = dataForm.homeless ? 190.30 : 0 ;
+    const homelessDeduction = dataForm.homeless ? snapDeductions.homeless : 0 ;
 
     // utility deduction
     const nonHeatingUtilities = [dataForm.paysElectricity, dataForm.paysGasFuel, dataForm.paysWater, dataForm.paysSewage, dataForm.paysTrash, dataForm.paysPhone] ;
     const count = nonHeatingUtilities.filter(Boolean).length ;
     let utilityDeduction = 0 ;
     if (dataForm.paysHeatingCooling) {
-	utilityDeduction = 472 ;
+	utilityDeduction = snapDeductions.standardUtility ;
     }
     else if (count >= 2) {
-	utilityDeduction = 317 ;
+	utilityDeduction = snapDeductions.noHeatCool ;
     }
     else if ((count === 1) && dataForm.paysPhone) {
-	utilityDeduction = 56 ;
+	utilityDeduction = snapDeductions.phone ;
     }
 
     // tests
@@ -130,10 +122,10 @@ function SnapEligibility({dataForm}) {
     // assets
     let assetLimit ;
     if (hheod) {
-	assetLimit = 3750 ;
+	assetLimit = snapIncomeLimits.assets.hheod ;
     }
     else {
-	assetLimit = 2500 ;
+	assetLimit = snapIncomeLimits.assets.nonHHEOD ;
     }
 
     const assetString = totalAssets.toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
@@ -331,7 +323,7 @@ function LiheapEligibility({dataForm}) {
     }
 }
 
-function MedicaidEligibility({dataForm,updateDataForm}) {
+function MedicaidEligibility({dataForm}) {
     const size = Number(dataForm.size) ;
     const resident = dataForm.resident ;
     const citizen = dataForm.citizen ;
@@ -450,7 +442,7 @@ function MedicaidEligibility({dataForm,updateDataForm}) {
 
     if (!(qualifiedCHIP || qualifiedPregnantMedicaid || qualifiedChildMedicaid || qualifiedDisabledMedicaid || qualifiedMAGI)) {
 	if (!(childUnder5 || child5to18) & !disabled) {
-	    reasonList.push("In general, Wyoming Medicaid is restricted to children and people with disabilities or who are pregnant.") ;
+	    reasonList.push("In general, Wyoming Medicaid is restricted to families with children, people with disabilities, and pregnant women.") ;
 	}
 	else {
 	    reasonList.push("Your household exceeds the income thresholds for Wyoming's Medicaid programs.") ;
@@ -477,9 +469,10 @@ function MedicaidEligibility({dataForm,updateDataForm}) {
 	)
     }
     else if (oversize) {
-	description = "" ;
+	description = "Eligibility unclear" ;
+	const oversizeExplanation = <li>Wyoming only publicly lists Medicaid income limits for households up to 10 people. Contact the Wyoming Department of Health to see if anyone in your household qualifies.</li>
 	return (
-	    <ResultsCard qualified={true} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={false} program={"Medicaid"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
     else if (qualifiedMAGI || qualifiedPregnantMedicaid || qualifiedChildMedicaid || qualifiedDisabledMedicaid) {
@@ -487,7 +480,7 @@ function MedicaidEligibility({dataForm,updateDataForm}) {
 	return (
 	    <>
 		{qualifiedCHIP &&
-		<ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan"} icon={"chipicon.png"} description={description} link={"http://www.google.com"}/>}
+		<ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan)"} icon={"chipicon.png"} description={description} link={"http://www.google.com"}/>}
 		<ResultsCard qualified={true} reasons={''} program={"Medicaid"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
 	    </>
 	)
@@ -504,7 +497,125 @@ function MedicaidEligibility({dataForm,updateDataForm}) {
 	    <ResultsCard qualified={false} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
 	)
     }
+}
 
+function TanfEligibility({dataForm}) {
+    const size = Number(dataForm.size) ;
+    const resident = dataForm.resident ; 
+    const citizen = dataForm.citizen ; 
+    const married = dataForm.size > 1 ? dataForm.married : false ;
+
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+
+    // tests
+    let qualifiedTANF = true ;
+    const reasonList = [] ;
+
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedTANF = false ;
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedTANF = false ;
+	reasonList.push("At least one household member must be a U.S. citizen or qualified immigrant.")
+    }
+
+    // children
+    if (!(dataForm.childUnder5 || dataForm.child5to18)) {
+	qualifiedTANF = false ;
+	reasonList.push("In general, Wyoming POWER / TANF is restricted to families with children.")
+    }
+
+    // income
+    let shelterQualified = false ;
+    if (dataForm.paysRentMortgage ||
+	dataForm.paysHeatingCooling ||
+	dataForm.paysElectricity ||
+	dataForm.paysGasFuel ||
+	dataForm.paysWater ||
+	dataForm.paysSewage ||
+	dataForm.paysTrash) {
+	shelterQualified = true ;
+    }
+
+    let netIncomeLimit ;
+    let oversize = false ;
+    if (size > 12) {
+	oversize = true ;
+	netIncomeLimit = 0 ;
+    }
+    else {
+	if (married & shelterQualified) {
+	    netIncomeLimit = tanfIncomeLimits.marriedCoupleQualified[size] ;
+	}
+	else if (married & !shelterQualified) {
+	    netIncomeLimit = tanfIncomeLimits.marriedCoupleDisqualified[size] ;
+	}
+	else if (!married & shelterQualified) {
+	    netIncomeLimit = tanfIncomeLimits.singleParentQualified[size] ;
+	}
+	else if (!married & !shelterQualified) {
+	    netIncomeLimit = tanfIncomeLimits.singleParentDisqualified[size] ;
+	}
+    }
+
+    let earnedIncomeDeduction ;
+    if (married) {
+	earnedIncomeDeduction = tanfIncomeLimits.marriedCoupleEarnedIncomeDisregard ;
+    }
+    else {
+	earnedIncomeDeduction = tanfIncomeLimits.singleParentEarnedIncomeDisregard ;
+    }
+    
+    const netIncome = earnedIncome + otherIncome - earnedIncomeDeduction ;
+    const netIncomeString = netIncome.toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const netIncomeLimitString = netIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
+
+    if (netIncome > netIncomeLimit) {
+	qualifiedTANF = false ;
+	reasonList.push("Your total monthly income of " + netIncomeString + " per month exceeds the limit of " + netIncomeLimitString + " for your household size and composition.")
+    }
+
+    // reasons not qualified
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
+    }
+
+    // html
+    let description ;
+    if (dataForm.onTANF) {
+	description = "Already participating" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"POWER / TANF"} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (oversize) {
+	description = "Eligibility unclear" ;
+	const oversizeExplanation = <li>Wyoming only publicly lists POWER / TANF income limits for households up to 10 people. Contact the Wyoming Department of Family Services to see if anyone in your household qualifies.</li>
+	return (
+	    <ResultsCard qualified={false} program={"POWER / TANF"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else if (qualifiedTANF) {
+	description = "Likely eligible" ;
+	return (
+	    <ResultsCard qualified={true} reasons={''} program={"POWER / TANF"} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
+    else {
+	description = "Likely not eligible" ;
+	return (
+	    <ResultsCard qualified={false} program={"POWER / TANF"} reasons={<Reasons reasonList={reasonList}/>} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	)
+    }
 }
 
 export default function Results({onBack,dataForm}) {
@@ -514,6 +625,7 @@ export default function Results({onBack,dataForm}) {
 	    <WicEligibility dataForm={dataForm}/>
 	    <LiheapEligibility dataForm={dataForm}/>
 	    <MedicaidEligibility dataForm={dataForm}/>
+	    <TanfEligibility dataForm={dataForm}/>
 	</>
     )
 }

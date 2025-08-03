@@ -1,5 +1,5 @@
 import { useState } from "react" ;
-import { HowMuchSubQuestion , medicaidIncomeLimits } from './MiscComponents' ;
+import { HowMuchSubQuestion } from './MiscComponents' ;
 
 
 function OnSNAP({dataForm,updateDataForm}) {

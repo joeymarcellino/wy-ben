@@ -52,7 +52,7 @@ export function HowMuchSubQuestion({dataForm,updateDataForm,displayCheck,dataFie
 		{questionText} <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={dataField}/>
 	    </>
 	)
-    }
+}
 }
 
 export function ResultsCard({qualified, reasons, program, icon, description, link}) {
@@ -85,6 +85,23 @@ export function ResultsCard({qualified, reasons, program, icon, description, lin
 }
 
 // Wyoming SNAP Income Limits (Oct 1, 2024 – Sept 30, 2025)
+export const snapDeductions = {
+    standard: {
+	1: 177,
+	2: 177,
+	3: 177,
+	4: 184,
+	5: 215,
+	moreThan5: 246
+    },
+    medical: 175,
+    shelterMax: 712,
+    homeless: 190.30,
+    standardUtility: 472,
+    noHeatCool: 317,
+    phone: 56
+}
+
 export const snapIncomeLimits = {
     maxGrossHHEOD: {
 	1: 2071,
@@ -124,6 +141,10 @@ export const snapIncomeLimits = {
 	9: 4843,
 	10: 5292,
 	additionalMember: 449
+    },
+    assets: {
+	hheod: 3750,
+	nonHHEOD: 2500
     }
 }
 
@@ -220,3 +241,65 @@ export const medicaidIncomeLimits = {
     },
     disabled: 2901
 }
+
+export const tanfIncomeLimits = {
+    singleParentEarnedIncomeDisregard: 600,
+    marriedCoupleEarnedIncomeDisregard: 1200,
+    singleParentDisqualified: {
+	1: 887,
+	2: 1121,
+	3: 1197,
+	4: 1197,
+	5: 1276,
+	6: 1276,
+	7: 1354,
+	8: 1354,
+	9: 1354,
+	10: 1354,
+	11: 1354,
+	12: 1354
+    },
+    marriedCoupleDisqualified: {
+	1: 1487,
+	2: 1721,
+	3: 1797,
+	4: 1797,
+	5: 1876,
+	6: 1876,
+	7: 1954,
+	8: 1954,
+	9: 1954,
+	10: 1954,
+	11: 1954,
+	12: 1954
+    },
+    singleParentQualified: {
+	1: 1093,
+	2: 1416,
+	3: 1469,
+	4: 1469,
+	5: 1523,
+	6: 1523,
+	7: 1577,
+	8: 1577,
+	9: 1577,
+	10: 1577,
+	11: 1577,
+	12: 1577
+    },
+    marriedCoupleQualified: {
+	1: 1693,
+	2: 2016,
+	3: 2069,
+	4: 2069,
+	5: 2123,
+	6: 2123,
+	7: 2177,
+	8: 2177,
+	9: 2177,
+	10: 2177,
+	11: 2177,
+	12: 2177
+    }
+}
+	

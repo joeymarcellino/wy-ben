@@ -17,12 +17,13 @@ function App() {
 	resident: null,
 	citizen: null,
 	size: "1",
-	pregnantPostpartum: false,
-	childUnder5: false,
-	child5to18: false,
-	elderly: false,
-	disabled: false,
-	student: false,
+	married: null,
+	pregnantPostpartum: null,
+	childUnder5: null,
+	child5to18: null,
+	elderly: null,
+	disabled: null,
+	student: null,
 	earnedIncome: "",
 	otherIncome: "",
 	totalAssets: "",
@@ -49,8 +50,7 @@ function App() {
 	onTANF: null,
 	tanfIncome : "",
 	onSSI: null,
-	ssiIncome: "",
-	onSSDI: null
+	ssiIncome: ""
     }) ; 
 
     const handleIncomeNext = () => {
@@ -91,6 +91,19 @@ function App() {
 	setStep(step+1) ;
     } ;
 
+    const handleOtherProgramsNext = () => {
+	const fields = ["tanfIncome","ssiIncome"] ;
+	const checks =  ["onTANF","onSSI"]
+
+	for (let x = 0; x<fields.length; x++) {
+	    if (dataForm[checks[x]] === true & dataForm[fields[x]] === "") {
+		dataForm[fields[x]] = "0.00"
+	    }
+	} ;
+
+	setStep(step+1) ;
+    } ;
+
     const steps = [<WelcomePage onNext = {() => setStep(step+1)}/>,
 	<ResidencyCitizenship onNext={() => setStep(step+1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<HouseholdComposition onNext={() => setStep(step+1)} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
@@ -98,7 +111,7 @@ function App() {
 	<Shelter onNext={handleShelterNext} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<MedicalDependentChildSupport onNext={handleMedicalDependentChildSupportNext} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<Utilities onNext={() => setStep(step+1)} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
-	<OtherPrograms onNext={() => setStep(step+1)} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
+	<OtherPrograms onNext={handleOtherProgramsNext} onBack={() => setStep(step-1)} dataForm={dataForm} updateDataForm={updateDataForm}/>,
 	<Results onBack={() => setStep(step-1)} dataForm={dataForm}/>]; 
 
     return (

@@ -37,7 +37,7 @@ function Citizenship({dataForm,updateDataForm}) {
 
     return(
         <>
-            <h1>Are any of the household members U.S citizens or qualified immigrants (e.g. green card holder, refugee, asylee)?</h1>
+            <h1>Are any of your household members U.S citizens or qualified immigrants (e.g. green card holder, refugee, asylee)?</h1>
             <button className={yesClass} onClick={handleYesClick}>Yes</button>
             <button className={noClass} onClick={handleNoClick}>No</button>
         </>
