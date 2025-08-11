@@ -46,7 +46,7 @@ function InsuranceTaxHOA({dataForm,updateDataForm}) {
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>
 	    </div>
-	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysInsuranceTaxHOA"} dataField={"rentMortgage"} questionText={"How much are your monthly homeowner's insurance payments, property taxes, or homeowner's association fees?"}/>
+	    <HowMuchSubQuestion dataForm={dataForm} updateDataForm={updateDataForm} displayCheck={"paysInsuranceTaxHOA"} dataField={"insuranceTaxHOA"} questionText={"How much are your monthly homeowner's insurance payments, property taxes, or homeowner's association fees?"}/>
         </div>
     )
 }
@@ -77,8 +77,8 @@ function Homeless({dataForm,updateDataForm}) {
 
 export default function Shelter({onNext,onBack,dataForm,updateDataForm}) {
     const nextButtonActive = (
-	dataForm.paysRentMortgage !== null &
-	dataForm.paysInsuranceTaxHOA !== null &
+	dataForm.paysRentMortgage !== null &&
+	dataForm.paysInsuranceTaxHOA !== null &&
 	dataForm.homeless !== null) ;
     return (
 	<div className="form-page">

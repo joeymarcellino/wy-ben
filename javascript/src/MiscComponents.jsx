@@ -64,9 +64,23 @@ export function ResultsCard({qualified, reasons, program, icon, description, lin
     const handleClick = () => {
 	setShowReasons((prev) => !prev) ;
     }
-    const cardClass = `results-card ${qualified ? 'is-eligible' : 'is-ineligible'}` ;
+    let cardClass ;
+    switch (qualified) {
+	case -1:
+	    cardClass = `results-card oversize` ;
+	    break ;
+	case 0:
+	    cardClass = `results-card is-ineligible` ;
+	    break ;
+	case 1:
+	    cardClass = `results-card is-eligible` ;
+	    break ;
+	case 2:
+	    cardClass = 'results-card is-eligible' ;
+	    break ;
+    }
 
-    if (qualified) {
+    if (qualified === 1) {
 	return (
 	    <div className={cardClass}>
 		<div className="icon">{icon}</div>
@@ -76,14 +90,38 @@ export function ResultsCard({qualified, reasons, program, icon, description, lin
 	    </div>
 	)
     }
-    else {
+    if (qualified === 2) {
 	return (
 	    <div className={cardClass}>
-		<div className="icon"></div>
+		<div className="icon">{icon}</div>
+		<h2>{program}</h2>
+		<p>{description}</p>
+	    </div>
+	)
+    }
+    else if (qualified === 0) {
+	return (
+	    <div className={cardClass}>
+		<div className="icon">{icon}</div>
 		<h2>{program}</h2>
 		<p>{description}</p>
 		<button className="reason-toggle" onClick={handleClick}>
 		    {showReasons ? 'Hide reasons' : 'Why not?'}
+		</button>
+		<div className="reasons-container">
+		    {showReasons && reasons}
+		</div>
+	    </div>
+	)
+    }
+    else {
+	return (
+	    <div className={cardClass}>
+		<div className="icon">{icon}</div>
+		<h2>{program}</h2>
+		<p>{description}</p>
+		<button className="reason-toggle" onClick={handleClick}>
+		    {showReasons ? 'Hide reasons' : 'Why?'}
 		</button>
 		<div className="reasons-container">
 		    {showReasons && reasons}

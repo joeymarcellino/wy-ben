@@ -82,8 +82,8 @@ function ChildSupport({dataForm,updateDataForm}) {
 
 export default function MedicalDependentChildSupport({onNext,onBack,dataForm,updateDataForm}) {
     const nextButtonActive = (
-	(dataForm.paysMedicalExpenses !== null || (!dataForm.elderly & !dataForm.disabled)) &
-	dataForm.paysDependentCare !== null &
+	(dataForm.paysMedicalExpenses !== null || (!dataForm.elderly & !dataForm.disabled)) &&
+	dataForm.paysDependentCare !== null &&
 	dataForm.paysChildSupport !== null) ;
     return (
 	<div className="form-page">

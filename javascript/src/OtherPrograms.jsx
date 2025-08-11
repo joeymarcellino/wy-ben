@@ -102,9 +102,9 @@ function OnSSI({dataForm,updateDataForm}) {
 }
 
 export default function OtherPrograms({onNext,onBack,dataForm,updateDataForm}) {
-    const nextButtonActive = ((dataForm.onSNAP != null) &
-    (dataForm.onMedicaid != null) &
-    (dataForm.onTANF != null) &
+    const nextButtonActive = ((dataForm.onSNAP != null) &&
+    (dataForm.onMedicaid != null) &&
+    (dataForm.onTANF != null) &&
     (dataForm.onSSI != null)) ;
     return (
         <div className="form-page">

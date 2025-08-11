@@ -188,7 +188,7 @@ function Student({dataForm,updateDataForm}) {
 	    </div>
 	    {dataForm.student === true &&
 	    <div>
-		<p>Students don't count lol</p>
+		<p>Students face additional eligibility requirements (see <a href="https://www.fns.usda.gov/snap/students" target="_blank" rel="noopener noreferrer">here</a>). If your household includes an ineligible student, don't count them for the purposes of this calculator (subtract them from the household size, ignore their income/assets, etc.).</p>
 	    </div>
 	    }
         </div>
@@ -197,11 +197,11 @@ function Student({dataForm,updateDataForm}) {
 
 export default function HouseholdComposition({onNext,onBack,dataForm,updateDataForm}) {
     const nextButtonActive = (
-	dataForm.pregnantPostpartum !== null &
-	dataForm.childUnder5 !== null &
-	dataForm.child5to18 !== null &
-	dataForm.elderly !== null &
-	dataForm.disabled !== null &
+	dataForm.pregnantPostpartum !== null &&
+	dataForm.childUnder5 !== null &&
+	dataForm.child5to18 !== null &&
+	dataForm.elderly !== null &&
+	dataForm.disabled !== null &&
 	dataForm.student !== null) ;
     return (
         <div className="form-page">

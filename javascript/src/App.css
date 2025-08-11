@@ -9,6 +9,7 @@
   --border-color: #d9e1e8;
   --success-green: #1a7f37;
   --error-red: #c8102e;
+  --unclear-yellow: #f1d21e;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -36,10 +37,21 @@ body {
 #root {
   width: 100%;
   max-width: 700px;
+}
+
+.app-container {
   background: var(--white);
   border-radius: 16px;
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+
+.disclaimer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  color: var(--light-text);
 }
 
 /* Typography */
@@ -277,6 +289,10 @@ select:focus {
   border-left: 5px solid var(--error-red);
 }
 
+.results-card.oversize {
+  border-left: 5px solid var(--unclear-yellow);
+}
+
 .results-card .icon {
   grid-area: icon;
   width: 48px;
@@ -308,6 +324,10 @@ select:focus {
 
 .results-card.is-ineligible > p {
   color: var(--error-red);
+}
+
+.results-card.oversize > p {
+  color: var(--unclear-yellow);
 }
 
 .results-card .reasons-container {
@@ -357,4 +377,31 @@ select:focus {
   background-color: var(--primary-blue);
   border-radius: 4px;
   transition: width 0.4s ease-in-out;
+}
+
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Aligns items to the top */
+  gap: 2rem; /* Adds space between the images and the main content */
+  width: 100%;
+}
+
+.main-content-area {
+  /* This ensures your main app box doesn't get wider than its max-width */
+  width: 100%;
+  max-width: 700px;
+}
+
+.side-image {
+  width: 180px; /* Adjust the size of your images as needed */
+  height: auto;
+  margin-top: 6rem; /* Pushes the images down a bit to align nicely */
+}
+
+/* This media query hides the decorative images on smaller screens */
+@media (max-width: 1200px) {
+  .side-image {
+    display: none;
+  }
 }

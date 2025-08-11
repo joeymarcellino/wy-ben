@@ -1,6 +1,17 @@
 import { useState } from 'react' ;
 import { snapIncomeLimits, snapDeductions, wicIncomeLimits, liheapIncomeLimits, medicaidIncomeLimits, tanfIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
+import snapSVG from './assets/snap.svg' ;
+import wicSVG from './assets/wic.svg' ;
+import medicaidSVG from './assets/medicaid.svg' ;
+import liheapSVG from './assets/liheap.svg' ;
+import tanfSVG from './assets/tanf.svg' ;
+
+const snapIcon = <img src={snapSVG} alt="SNAP" style={{width: '3vw'}}/> ; 
+const wicIcon = <img src={wicSVG} alt="WIC" style={{width: '3vw'}}/> ; 
+const medicaidIcon = <img src={medicaidSVG} alt="Medicaid" style={{width: '3vw'}}/> ; 
+const liheapIcon = <img src={liheapSVG} alt="LIHEAP" style={{width: '3vw'}}/> ; 
+const tanfIcon = <img src={tanfSVG} alt="TANF" style={{width: '3vw'}}/> ; 
 
 function SnapEligibility({dataForm}) {
     const size = Number(dataForm.size)
@@ -148,23 +159,25 @@ function SnapEligibility({dataForm}) {
     }
 
     // html
+    const snapLink = "https://dfs.wyo.gov/assistance-programs/food-assistance/supplemental-nutrition-assistance-program-snap/" ;
     let description ;
     if (dataForm.onSNAP) {
 	description = "Already participating" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"SNAP"} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={2} reasons={''} program={"SNAP"} icon={snapIcon} description={description} link={''}/>
 	)
     }
     else if (qualifiedSNAP) {
 	description = "Likely eligible" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"SNAP"} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={1} reasons={''} program={"SNAP"} icon={snapIcon} description={description} link={snapLink}/>
 	)
     }
     else {
 	description = "Likely not eligible" ;
+	reasonList.push(<a href={snapLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
 	return (
-	    <ResultsCard qualified={false} program={"SNAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"snapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"SNAP"} reasons={<Reasons reasonList={reasonList}/>} icon={snapIcon} description={description} link={""}/>
 	)
     }
 }
@@ -227,23 +240,25 @@ function WicEligibility({dataForm}) {
     }
 
     // html
+    const wicLink = "https://health.wyo.gov/publichealth/wic/" ;
     let description ;
     if (dataForm.onWIC) {
 	description = "Already participating" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"WIC"} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={2} reasons={''} program={"WIC"} icon={wicIcon} description={description} link={''}/>
 	)
     }
     else if (qualifiedWIC) {
 	description = "Likely eligible" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"WIC"} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={1} reasons={''} program={"WIC"} icon={wicIcon} description={description} link={wicLink}/>
 	)
     }
     else {
 	description = "Likely not eligible" ;
+	reasonList.push(<a href={wicLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
 	return (
-	    <ResultsCard qualified={false} program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={"wicicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={wicIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
@@ -302,23 +317,25 @@ function LiheapEligibility({dataForm}) {
     }
 
     // html
+    const liheapLink = "https://dfs.wyo.gov/assistance-programs/home-utilities-energy-assistance/low-income-energy-assistance-program-lieap/"
     let description ;
     if (dataForm.onLIHEAP) {
 	description = "Already participating" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"LIHEAP"} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={2} reasons={''} program={"LIHEAP"} icon={liheapIcon} description={description} link={''}/>
 	)
     }
     else if (qualifiedLIHEAP) {
 	description = "Likely eligible" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"LIHEAP"} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={1} reasons={''} program={"LIHEAP"} icon={liheapIcon} description={description} link={liheapLink}/>
 	)
     }
     else {
 	description = "Likely not eligible" ;
+	reasonList.push(<a href={liheapLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
 	return (
-	    <ResultsCard qualified={false} program={"LIHEAP"} reasons={<Reasons reasonList={reasonList}/>} icon={"liheapicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"LIHEAP"} reasons={<Reasons reasonList={reasonList}/>} icon={liheapIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
@@ -461,18 +478,20 @@ function MedicaidEligibility({dataForm}) {
     }
 
     // html
+    const medicaidLink = "https://health.wyo.gov/healthcarefin/medicaid/"
     let description ;
     if (dataForm.onMedicaid) {
 	description = "Already participating" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"Medicaid"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={2} reasons={''} program={"Medicaid"} icon={medicaidIcon} description={description} link={''}/>
 	)
     }
     else if (oversize) {
 	description = "Eligibility unclear" ;
-	const oversizeExplanation = <li>Wyoming only publicly lists Medicaid income limits for households up to 10 people. Contact the Wyoming Department of Health to see if anyone in your household qualifies.</li>
+	// const oversizeExplanation = ["Wyoming only publicly lists Medicaid income limits for households up to 10 people. Contact the Wyoming Department of Health to see if anyone in your household qualifies."]
+	const oversizeExplanation = [<p style={{fontSize: ".9rem"}}>Wyoming only publicly lists Medicaid income limits for households up to 10 people. <a href={medicaidLink} target="_blank" rel="noopener noreferrer">Contact</a> the Wyoming Department of Health to see if anyone in your household qualifies.</p>]
 	return (
-	    <ResultsCard qualified={false} program={"Medicaid"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={-1} program={"Medicaid"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={medicaidIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
     else if (qualifiedMAGI || qualifiedPregnantMedicaid || qualifiedChildMedicaid || qualifiedDisabledMedicaid) {
@@ -480,21 +499,21 @@ function MedicaidEligibility({dataForm}) {
 	return (
 	    <>
 		{qualifiedCHIP &&
-		<ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan)"} icon={"chipicon.png"} description={description} link={"http://www.google.com"}/>}
-		<ResultsCard qualified={true} reasons={''} program={"Medicaid"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+		<ResultsCard qualified={1} reasons={''} program={"CHIP (Children's Health Insurance Plan)"} icon={medicaidIcon} description={description} link={"http://www.google.com"}/>}
+		<ResultsCard qualified={1} reasons={''} program={"Medicaid"} icon={medicaidIcon} description={description} link={"http://www.google.com"}/>
 	    </>
 	)
     }
     else if (qualifiedCHIP) {
 	description = "Likely eligible" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"CHIP (Children's Health Insurance Plan"} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={1} reasons={''} program={"CHIP (Children's Health Insurance Plan)"} icon={medicaidIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
     else {
 	description = "Likely not eligible" ;
 	return (
-	    <ResultsCard qualified={false} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"Medicaid"} reasons={<Reasons reasonList={reasonList}/>} icon={medicaidIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
 }
@@ -591,29 +610,30 @@ function TanfEligibility({dataForm}) {
 
     // html
     let description ;
+    const tanfLink = "https://dfs.wyo.gov/assistance-programs/cash-assistance/" ;
     if (dataForm.onTANF) {
 	description = "Already participating" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"POWER / TANF"} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={2} reasons={''} program={"POWER / TANF"} icon={tanfIcon} description={description} link={''}/>
 	)
     }
     else if (oversize) {
 	description = "Eligibility unclear" ;
-	const oversizeExplanation = <li>Wyoming only publicly lists POWER / TANF income limits for households up to 10 people. Contact the Wyoming Department of Family Services to see if anyone in your household qualifies.</li>
+	const oversizeExplanation = [<p style={{fontSize: ".9rem"}}>Wyoming only publicly lists POWER / TANF income limits for households up to 10 people. <a href={tanfLink} target="_blank" rel="noopener noreferrer">Contact</a> the Wyoming Department of Family Services to see if anyone in your household qualifies.</p>]
 	return (
-	    <ResultsCard qualified={false} program={"POWER / TANF"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={"medicaidicon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={-1} program={"POWER / TANF"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={tanfIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
     else if (qualifiedTANF) {
 	description = "Likely eligible" ;
 	return (
-	    <ResultsCard qualified={true} reasons={''} program={"POWER / TANF"} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={1} reasons={''} program={"POWER / TANF"} icon={tanfIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
     else {
 	description = "Likely not eligible" ;
 	return (
-	    <ResultsCard qualified={false} program={"POWER / TANF"} reasons={<Reasons reasonList={reasonList}/>} icon={"tanficon.png"} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"POWER / TANF"} reasons={<Reasons reasonList={reasonList}/>} icon={tanfIcon} description={description} link={"http://www.google.com"}/>
 	)
     }
 }

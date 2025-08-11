@@ -1,5 +1,6 @@
 import { useState } from 'react' ; 
 import './App.css' ; 
+import wyFlag from './assets/flag.svg' ;
 
 import WelcomePage from './WelcomePage' ; 
 import ResidencyCitizenship from './ResidencyCitizenship' ; 
@@ -116,13 +117,30 @@ function App() {
 	<Results onBack={() => setStep(step-1)} dataForm={dataForm}/>]; 
 
     return (
-	<>
-	    <ProgressBar currentStep={step} totalSteps={steps.length}/>
-	    <div>
-		{steps[step]} 
-	    </div>
-	</>
-    )
+	<div className="page-wrapper">
+	    {step === 0 && (
+		<img src={wyFlag} className="side-image" alt="Decorative graphic"/>
+	    )}
+
+	    <main className="main-content-area">
+		<div className="app-container">
+		    <ProgressBar currentStep={step} totalSteps={steps.length} />
+		    <div>{steps[step]}</div>
+		</div>
+		{step === 0 && (
+		    <div className="disclaimer">
+			<p>
+			    This website is an independent, non-governmental resource. All calculations are estimates for educational purposes only and are based on publicly available information that may be incomplete or outdated. To determine your final eligibility and benefit amount, you must submit an official application to the appropriate government agency.
+			</p>
+		    </div>
+		)}
+	    </main>
+
+	    {step === 0 && (
+	    <img src={wyFlag} className="side-image" alt="Decorative graphic"/>
+	    )}
+	</div>
+    );
 }
 
 export default App

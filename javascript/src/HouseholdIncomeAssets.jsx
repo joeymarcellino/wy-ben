@@ -15,7 +15,7 @@ function HouseholdOtherIncome({dataForm,updateDataForm}) {
   return (
 	<div className="question-block">
 	    <h2>What is your monthly household other income before taxes?</h2>
-	    <p>Include other stuff</p>
+	    <p>Include any income from sources other than working a job (Social Security, unemployment, child support, etc.).</p>
 	    <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={"otherIncome"}/>
 	</div>
 	)
@@ -25,7 +25,7 @@ function TotalAssets({dataForm,updateDataForm}) {
   return (
 	<div className="question-block">
 	    <h2>What are your total assets?</h2>
-	    <p>Include stuff</p>
+	    <p>Include countable resources, like saved cash or money in a bank account. Don't include the value of things like a house or car.</p>
 	    <AutoFormatMoneyInput dataForm={dataForm} updateDataForm={updateDataForm} dataField={"totalAssets"}/>
 	</div>
 	)

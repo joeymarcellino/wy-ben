@@ -50,7 +50,7 @@ function Citizenship({dataForm,updateDataForm}) {
 }
 
 export default function ResidencyCitizenship({onNext, dataForm, updateDataForm}) {
-  const nextButtonActive = (dataForm.citizen !== null & dataForm.resident !== null) ;
+  const nextButtonActive = (dataForm.citizen !== null && dataForm.resident !== null) ;
 
   return(
     <div className="form-page">
