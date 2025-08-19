@@ -1,6 +1,7 @@
 import { useState } from 'react' ; 
 import './App.css' ; 
 import wyFlag from './assets/flag.svg' ;
+import allIcons from './assets/all_icons.svg' ;
 
 import WelcomePage from './WelcomePage' ; 
 import ResidencyCitizenship from './ResidencyCitizenship' ; 
@@ -137,7 +138,7 @@ function App() {
 	    </main>
 
 	    {step === 0 && (
-	    <img src={wyFlag} className="side-image" alt="Decorative graphic"/>
+	    <img src={allIcons} className="side-image" alt="Decorative graphic"/>
 	    )}
 	</div>
     );
