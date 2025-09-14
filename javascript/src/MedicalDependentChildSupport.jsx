@@ -80,15 +80,46 @@ function ChildSupport({dataForm,updateDataForm}) {
     )
 }
 
+function ParentCaretakerWorkingStudying({dataForm,updateDataForm}) {
+    const handleYesClick = (e) => {
+        updateDataForm((prevData) => ({
+            ...prevData, parentWorking : true})) 
+    }
+    const handleNoClick = (e) => {
+        updateDataForm((prevData) => ({
+            ...prevData, parentWorking : false})) 
+    }
+
+    const yesClass = dataForm.parentWorking === true ? "clickedButton" : "unclickedButton"
+    const noClass = dataForm.parentWorking === false ? "clickedButton" : "unclickedButton"
+
+    if (dataForm.childUnder5 || dataForm.child5to18) {
+	return(
+	    <div className="question-block">
+		<h2>Are the parents/caretakers of the child/children in the household working or pursuing a first bachelor's degree?</h2>
+		<div className="button-group">
+		    <button className={yesClass} onClick={handleYesClick}>Yes</button>
+		    <button className={noClass} onClick={handleNoClick}>No</button>
+		</div>
+	    </div>
+	)
+    }
+    else
+	return null
+}
+
 export default function MedicalDependentChildSupport({onNext,onBack,dataForm,updateDataForm}) {
     const nextButtonActive = (
 	(dataForm.paysMedicalExpenses !== null || (!dataForm.elderly & !dataForm.disabled)) &&
 	dataForm.paysDependentCare !== null &&
-	dataForm.paysChildSupport !== null) ;
+	dataForm.paysChildSupport !== null &&
+	(dataForm.parentWorking !== null || (!dataForm.childUnder5 & !dataForm.child5to18))
+	) ;
     return (
 	<div className="form-page">
 	    <MedicalExpenses dataForm={dataForm} updateDataForm={updateDataForm}/>
 	    <DependentCare dataForm={dataForm} updateDataForm={updateDataForm}/>
+	    <ParentCaretakerWorkingStudying dataForm={dataForm} updateDataForm={updateDataForm}/>
 	    <ChildSupport dataForm={dataForm} updateDataForm={updateDataForm}/>
 	    <div className="nav-buttons">
 		<button className="back-button" onClick={onBack}>Back</button>

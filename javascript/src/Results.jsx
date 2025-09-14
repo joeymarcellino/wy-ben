@@ -1,17 +1,19 @@
 import { useState } from 'react' ;
-import { snapIncomeLimits, snapDeductions, wicIncomeLimits, liheapIncomeLimits, medicaidIncomeLimits, tanfIncomeLimits } from './MiscComponents' ;
+import { snapIncomeLimits, snapDeductions, wicIncomeLimits, liheapIncomeLimits, medicaidIncomeLimits, tanfIncomeLimits, childcareIncomeLimits } from './MiscComponents' ;
 import { ResultsCard } from './MiscComponents' ; 
 import snapSVG from './assets/snap.svg' ;
 import wicSVG from './assets/wic.svg' ;
 import medicaidSVG from './assets/medicaid.svg' ;
 import liheapSVG from './assets/liheap.svg' ;
 import tanfSVG from './assets/tanf.svg' ;
+import childcareSVG from './assets/childcare.svg' ;
 
 const snapIcon = <img className="icon-img" src={snapSVG} alt="SNAP"/> ; 
 const wicIcon = <img className="icon-img" src={wicSVG} alt="WIC"/> ; 
 const medicaidIcon = <img className="icon-img" src={medicaidSVG} alt="Medicaid"/> ; 
 const liheapIcon = <img className="icon-img" src={liheapSVG} alt="LIHEAP"/> ; 
 const tanfIcon = <img className="icon-img" src={tanfSVG} alt="TANF"/> ; 
+const childcareIcon = <img className="icon-img" src={childcareSVG} alt="Childcare Assistance"/> ;
 
 function SnapEligibility({dataForm}) {
     const size = Number(dataForm.size)
@@ -258,7 +260,7 @@ function WicEligibility({dataForm}) {
 	description = "Likely not eligible" ;
 	reasonList.push(<a href={wicLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
 	return (
-	    <ResultsCard qualified={0} program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={wicIcon} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"WIC"} reasons={<Reasons reasonList={reasonList}/>} icon={wicIcon} description={description} link={wicLink}/>
 	)
     }
 }
@@ -335,7 +337,7 @@ function LiheapEligibility({dataForm}) {
 	description = "Likely not eligible" ;
 	reasonList.push(<a href={liheapLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
 	return (
-	    <ResultsCard qualified={0} program={"LIHEAP"} reasons={<Reasons reasonList={reasonList}/>} icon={liheapIcon} description={description} link={"http://www.google.com"}/>
+	    <ResultsCard qualified={0} program={"LIHEAP"} reasons={<Reasons reasonList={reasonList}/>} icon={liheapIcon} description={description} link={liheapLink}/>
 	)
     }
 }
@@ -640,6 +642,102 @@ function TanfEligibility({dataForm}) {
     }
 }
 
+function ChildcareEligibility({dataForm}) {
+    const size = Number(dataForm.size) ;
+    const resident = dataForm.resident ; 
+    const citizen = dataForm.citizen ; 
+
+    const child5to18 = dataForm.child5to18 ;
+    const childUnder5 = dataForm.childUnder5 ;
+
+    const earnedIncome = Number(dataForm.earnedIncome.replace(/,/g,"")) ;
+    const otherIncome = Number(dataForm.otherIncome.replace(/,/g,"")) ;
+
+    // tests
+    let qualifiedChildcare = true ;
+    const reasonList = [] ;
+
+    // resident/citizen
+    if (!dataForm.resident) {
+	qualifiedChildcare = false ;
+	reasonList.push("Your household must reside in Wyoming.")
+    }
+    if (!dataForm.citizen) {
+	qualifiedChildcare = false ;
+	reasonList.push("At least one household member must be a U.S. citizen or qualified immigrant.")
+    }
+
+    // has kids
+    if (!(child5to18 || childUnder5)) {
+	qualifiedChildcare = false ; 
+	reasonList.push('You indicated that your household doesn\'t include children.') ; 
+    }
+
+    // size limit
+    let grossIncomeLimit
+    let oversize = false ;
+
+    if (size > 8) {
+	oversize = true ;
+	grossIncomeLimit = 0 ;
+    }
+    else {
+	grossIncomeLimit = childcareIncomeLimits.maxGross[size] ;
+    }
+
+    // income
+
+    const grossIncomeString = (earnedIncome + otherIncome).toLocaleString("en-US", {style:"currency", currency:"USD"}) ;
+    const grossIncomeLimitString = grossIncomeLimit.toLocaleString("en-US", {style:"currency", currency:"USD"}) ; 
+
+    if (earnedIncome + otherIncome > grossIncomeLimit) {
+	qualifiedChildcare = false ;
+	reasonList.push("Your total monthly income of " + grossIncomeString + " per month exceeds the limit of " + grossIncomeLimitString + " for your household size and composition.")
+    }
+
+    // reasons not qualified
+    function Reasons({reasonList}) {
+	return (
+	    <ul className="reason-list">
+		{reasonList.map((r,ind) => (
+		    <li key={ind}>{r}</li>
+		))}
+	    </ul>
+	)	
+    }
+
+    // html
+    const childcareLink = "https://health.wyo.gov/publichealth/childcare/" ;
+    let description ;
+    if (!(childUnder5 || child5to18)) {
+	description = "Likely not eligible" ;
+	reasonList.push(<a href={childcareLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
+	return (
+	    <ResultsCard qualified={0} program={"Childcare Assistance"} reasons={<Reasons reasonList={reasonList}/>} icon={childcareIcon} description={description} link={childcareLink}/>
+	)
+    }
+    else if (oversize) {
+	description = "Eligibility unclear" ;
+	const oversizeExplanation = [<p style={{fontSize: ".9rem"}}>Wyoming only publicly lists childcare assistance income limits for households up to 8 people. <a href={childcareLink} target="_blank" rel="noopener noreferrer">Contact</a> the Wyoming Department of Family Services to see if anyone in your household qualifies.</p>]
+	return (
+	    <ResultsCard qualified={-1} program={"Childcare Assistance"} reasons={<Reasons reasonList={oversizeExplanation}/>} icon={childcareIcon} description={description} link={childcareLink}/>
+	)
+    }
+    else if (qualifiedChildcare) {
+	description = "Likely eligible" ;
+	return (
+	    <ResultsCard qualified={1} reasons={''} program={"Childcare Assistance"} icon={childcareIcon} description={description} link={childcareLink}/>
+	)
+    }
+    else {
+	description = "Likely not eligible" ;
+	reasonList.push(<a href={childcareLink} className="cta-button" target="_blank" rel="noopener noreferrer">Learn More</a>) ;
+	return (
+	    <ResultsCard qualified={0} program={"Childcare Assistance"} reasons={<Reasons reasonList={reasonList}/>} icon={childcareIcon} description={description} link={childcareLink}/>
+	)
+    }
+}
+
 export default function Results({onBack,dataForm}) {
     return (
 	<div className="form-page">
@@ -651,6 +749,7 @@ export default function Results({onBack,dataForm}) {
 		<LiheapEligibility dataForm={dataForm}/>
 		<MedicaidEligibility dataForm={dataForm}/>
 		<TanfEligibility dataForm={dataForm}/>
+		<ChildcareEligibility dataForm={dataForm}/>
 	    </div>
 	    <div className="nav-buttons">
 		<button onClick={onBack} className="back-button">Go Back & Edit</button>

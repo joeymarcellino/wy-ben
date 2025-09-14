@@ -371,4 +371,18 @@ export const tanfIncomeLimits = {
 	12: 2177
     }
 }
+
+export const childcareIncomeLimits = {
+    maxGross: {
+	1: 2283,
+	2: 3084,
+	3: 3886,
+	4: 4689,
+	5: 5491,
+	6: 6293,
+	7: 7095,
+	8: 7897
+    }
+}
+    
 	

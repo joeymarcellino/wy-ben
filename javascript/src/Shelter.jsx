@@ -66,7 +66,7 @@ function Homeless({dataForm,updateDataForm}) {
 
     return(
         <div className="question-block">
-	    <h2>Does your household lack a permanent residence, sleep in a homeless shelter, live on the street, or "couch surf"?</h2>
+	    <h2>Does your household lack stable housing (e.g. staying in a shelter, living outdoors, or temporarily staying with friends or relatives)?</h2>
 	    <div className="button-group">
 		<button className={yesClass} onClick={handleYesClick}>Yes</button>
 		<button className={noClass} onClick={handleNoClick}>No</button>

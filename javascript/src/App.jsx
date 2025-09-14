@@ -48,6 +48,7 @@ function App() {
 	dependentCare: "",
 	paysChildSupport: null,
 	childSupport: "",
+	parentWorking: null,
 	onSNAP: null,
 	onMedicaid: null,
 	onTANF: null,
